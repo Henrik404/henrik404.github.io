@@ -3,72 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My PWA</title>
-    <!-- Manifest -->
-    <link rel="manifest" href="data:application/json,{
-        &quot;name&quot;: &quot;My PWA&quot;,
-        &quot;short_name&quot;: &quot;PWA&quot;,
-        &quot;start_url&quot;: &quot;/&quot;,
-        &quot;display&quot;: &quot;standalone&quot;,
-        &quot;background_color&quot;: &quot;#ffffff&quot;,
-        &quot;theme_color&quot;: &quot;#000000&quot;,
-        &quot;icons&quot;: [
-            {
-                &quot;src&quot;: &quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUA...&quot;,
-                &quot;sizes&quot;: &quot;192x192&quot;,
-                &quot;type&quot;: &quot;image/png&quot;
-            }
-        ]
-    }">
+    <title>Henrik's Personal Page</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 20px;
-        }
-        h1 {
+            line-height: 1.6;
             color: #333;
+            background-color: #f4f4f9;
+        }
+        header {
+            background: #007acc;
+            color: #fff;
+            text-align: center;
+            padding: 2rem 0;
+        }
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        header p {
+            font-size: 1.2rem;
+        }
+        section {
+            padding: 2rem;
+            max-width: 900px;
+            margin: auto;
+        }
+        h2 {
+            color: #007acc;
+            margin-bottom: 1rem;
+        }
+        .repository {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .repository a {
+            text-decoration: none;
+            color: #007acc;
+            font-weight: bold;
+        }
+        .repository a:hover {
+            text-decoration: underline;
+        }
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background: #007acc;
+            color: #fff;
+            margin-top: 2rem;
+        }
+        footer p {
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
-    <h1>Welcome to My PWA</h1>
-    <p>This is a blank PWA ready for customization.</p>
-    <script>
-        // Inline Service Worker Script
-        const swScript = `
-            self.addEventListener('install', event => {
-                console.log('Service Worker Installed');
-                event.waitUntil(
-                    caches.open('pwa-cache').then(cache => {
-                        return cache.addAll([
-                            '/',
-                            '/index.html',
-                        ]);
-                    })
-                );
-            });
+    <header>
+        <h1>Welcome to Henrik's Page</h1>
+        <p>Hi, I'm Henrik (aka Henrik404). Explore my projects and learn more about me.</p>
+    </header>
 
-            self.addEventListener('fetch', event => {
-                event.respondWith(
-                    caches.match(event.request).then(response => {
-                        return response || fetch(event.request);
-                    })
-                );
-            });
-        `;
+    <section>
+        <h2>About Me</h2>
+        <p>Hello! My name is Henrik, and I'm passionate about coding and building amazing projects. Check out my repositories and ongoing works below!</p>
+    </section>
 
-        // Dynamically create a Blob for the Service Worker
-        const blob = new Blob([swScript], { type: 'application/javascript' });
-        const swUrl = URL.createObjectURL(blob);
+    <section>
+        <h2>My Repository</h2>
+        <div class="repository">
+            <h3>Project: <a href="https://henrik404.github.io/7000/" target="_blank">7000</a></h3>
+            <p>Description: This is the first and currently active project I'm working on. Visit the link to learn more!</p>
+        </div>
+    </section>
 
-        // Register the Service Worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register(swUrl)
-                .then(() => console.log('Service Worker Registered'))
-                .catch(error => console.error('Service Worker Registration Failed:', error));
-        }
-    </script>
+    <footer>
+        <p>Created by Henrik404 | <a href="https://github.com/Henrik404" target="_blank" style="color: #fff; text-decoration: underline;">GitHub Profile</a></p>
+    </footer>
 </body>
 </html>
