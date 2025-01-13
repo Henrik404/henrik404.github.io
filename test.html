@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Interactive Orb Effect Demo</title>
+  <style>
+    /* CSS Variables */
+    :root {
+      --brand-h: 210;
+      --brand-s: 100%;
+      --brand-l: 50%;
+
+      --brand-foreground-h: 213;
+      --brand-foreground-s: 100%;
+      --brand-foreground-l: 60%;
+
+      --background-color: #f0f0f0; /* Light mode background */
+      --foreground-color: rgba(51, 51, 51, 0.8); /* Equivalent to text-foreground/80 */
+      --muted-foreground-color: #666666; /* Equivalent to text-muted-foreground */
+      --border-color: hsl(var(--brand-h), var(--brand-s), var(--brand-l));
+      --border-shadow1: hsla(var(--brand-h), var(--brand-s), var(--brand-l), 0.8);
+      --border-shadow2: hsla(var(--brand-foreground-h), var(--brand-foreground-s), var(--brand-foreground-l), 0.5);
+      --border-shadow-inset: hsla(var(--brand-h), var(--brand-s), var(--brand-l), 0.8);
+    }
+
+    /* Dark Mode Variables */
+    body.dark {
+      --brand-h: 213;
+      --brand-s: 100%;
+      --brand-l: 60%;
+
+      --brand-foreground-h: 210;
+      --brand-foreground-s: 100%;
+      --brand-foreground-l: 50%;
+
+      --background-color: #1a1a1a; /* Dark mode background */
+      --foreground-color: rgba(255, 255, 255, 0.8);
+      --muted-foreground-color: #cccccc;
+    }
+
+    /* Global Styles */
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: var(--background-color);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* OrbEffectDemo Styles */
+    .orb-effect-demo {
+      position: relative;
+      height: 600px;
+      max-width: 800px;
+      width: 100%;
+      background-color: var(--background-color);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      margin: 50px auto; /* Center the demo vertically and horizontally */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .content {
+      position: relative;
+      z-index: 10;
+      padding: 32px;
+    }
+
+    .content h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--foreground-color);
+    }
+
+    .content p {
+      color: var(--muted-foreground-color);
+      margin-top: 8px;
+    }
+
+    /* Orb Container */
+    .orb-container {
+      position: absolute;
+      inset: 0;
+      top: 400px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* OrbEffect Styles */
+    .orb-effect {
+      position: relative;
+      width: 100%;
+      padding-top: 12%; /* Equivalent to pt-12 */
+    }
+
+    .main-orb {
+      position: absolute;
+      left: -50%;
+      top: 0;
+      z-index: 10;
+      width: 200%;
+      overflow: hidden;
+      border-radius: 50%;
+      border: 4px solid var(--border-color);
+      background-color: rgba(240, 240, 240, 0.5); /* Adjusted for static CSS */
+      padding-top: 100%;
+      box-shadow:
+        0px 0px 12px var(--border-shadow1),
+        0px 0px 64px var(--border-shadow2),
+        inset 0px 0px 12px var(--border-shadow-inset);
+      transition: transform 0.2s;
+    }
+
+    /* Animated Layers */
+    .animated-layer {
+      position: absolute;
+      left: -50%;
+      top: 0;
+      height: 200%;
+      width: 200%;
+      border-radius: 50%;
+      animation: pulse-hover 8s ease-in-out infinite;
+    }
+
+    .layer1 {
+      background-color: hsla(var(--brand-foreground-h), var(--brand-foreground-s), var(--brand-foreground-l), 0.5);
+      mask-image: radial-gradient(140% 95%, transparent 0%, transparent 35%, black 55%);
+    }
+
+    .layer2 {
+      background-color: hsla(var(--brand-h), var(--brand-s), var(--brand-l), 0.5);
+      mask-image: radial-gradient(140% 110%, transparent 0%, transparent 35%, black 55%);
+    }
+
+    .layer3 {
+      left: -50%;
+      top: -5%;
+      background-color: rgba(255, 255, 255, 1);
+      mask-image: radial-gradient(140% 120%, transparent 0%, transparent 38%, black 43%);
+    }
+
+    /* Gradient Effects */
+    .gradient-effects {
+      position: absolute;
+      width: 100%;
+      top: 50%;
+    }
+
+    .gradient {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%) translateY(-50%);
+      border-radius: 50%;
+    }
+
+    .gradient1 {
+      height: 256px;
+      width: 60%;
+      transform: translateX(-50%) translateY(-50%) scale(2.5);
+      background: radial-gradient(ellipse at center, hsla(var(--brand-foreground-h), var(--brand-foreground-s), var(--brand-foreground-l), 0.5) 10%, hsla(var(--brand-foreground-h), var(--brand-foreground-s), var(--brand-foreground-l), 0) 60%);
+    }
+
+    .gradient2 {
+      height: 128px;
+      width: 40%;
+      transform: translateX(-50%) translateY(-50%) scale(2);
+      background: radial-gradient(ellipse at center, hsla(var(--brand-h), var(--brand-s), var(--brand-l), 0.3) 10%, hsla(var(--brand-foreground-h), var(--brand-foreground-s), var(--brand-foreground-l), 0) 60%);
+    }
+
+    /* Animations */
+    @keyframes pulse-hover {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-2%);
+      }
+    }
+
+    /* Responsive Adjustments */
+    @media (min-width: 640px) {
+      .gradient1 {
+        height: 512px;
+      }
+      .gradient2 {
+        height: 256px;
+      }
+    }
+
+    /* Toggle Dark Mode Button */
+    .toggle-dark-mode {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      background-color: var(--border-color);
+      color: var(--background-color);
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 100;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .toggle-dark-mode:hover {
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <!-- Dark Mode Toggle Button -->
+  <button class="toggle-dark-mode" id="toggleDarkMode">Toggle Dark Mode</button>
+
+  <div class="orb-effect-demo">
+    <!-- Content -->
+    <div class="content">
+      <h3>Interactive Orb Effect</h3>
+      <p>Hover around to see the dynamic glow effect</p>
+    </div>
+
+    <!-- Centered Orb -->
+    <div class="orb-container">
+      <div class="orb-effect">
+        <div class="main-orb" id="mainOrb">
+          <!-- Animated Layers -->
+          <div class="animated-layer layer1"></div>
+          <div class="animated-layer layer2"></div>
+          <div class="animated-layer layer3"></div>
+        </div>
+
+        <!-- Gradient Effects -->
+        <div class="gradient-effects">
+          <div class="gradient gradient1"></div>
+          <div class="gradient gradient2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // JavaScript for Interactivity
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const orbContainer = document.querySelector('.orb-effect-demo');
+      const orb = document.getElementById('mainOrb');
+      const toggleButton = document.getElementById('toggleDarkMode');
+
+      // Handle Mouse Movement for Dynamic Glow
+      orbContainer.addEventListener('mousemove', (e) => {
+        const rect = orbContainer.getBoundingClientRect();
+        const x = e.clientX - rect.left; // X position within the element
+        const y = e.clientY - rect.top;  // Y position within the element
+
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const deltaX = (x - centerX) / centerX;
+        const deltaY = (y - centerY) / centerY;
+
+        orb.style.transform = `translate(${deltaX * 10}px, ${deltaY * 10}px)`;
+      });
+
+      // Reset Orb Position on Mouse Leave
+      orbContainer.addEventListener('mouseleave', () => {
+        orb.style.transform = 'translate(0, 0)';
+      });
+
+      // Dark Mode Toggle Functionality
+      toggleButton.addEventListener('click', () => {
+        document.body.classList.toggle('dark');
+      });
+    });
+  </script>
+</body>
+</html>
